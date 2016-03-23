@@ -8,8 +8,8 @@ import Control.Concurrent.Service
 import Data.Word
 import System.Random
 
-type Missile            = Word
-type LaunchConfirmation = String
+type Missile    = Word
+type LaunchSite = String
 
 main :: IO ()
 main = do
@@ -18,7 +18,7 @@ main = do
     `race_` runLaunchSite serverInterface "Redmond"
     `race_` runLaunchSite serverInterface "Cambridge"
 
-runLaunchSite :: ServerInterface Missile LaunchConfirmation -> String -> IO ()
+runLaunchSite :: ServerInterface Missile LaunchSite -> LaunchSite -> IO ()
 runLaunchSite withMissile site = forever $ do
   sleepRandom
   catch
@@ -35,7 +35,7 @@ runLaunchSite withMissile site = forever $ do
       printThread $ site ++ ": Couldn't launch. Waiting for next missile."
     )
 
-runMissileProduction :: ClientInterface Missile LaunchConfirmation -> IO ()
+runMissileProduction :: ClientInterface Missile LaunchSite -> IO ()
 runMissileProduction launchMissile =
   produce  `race_` produce `race_` produce `race_` produce
   where
