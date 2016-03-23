@@ -27,7 +27,7 @@ runLaunchSite withMissile site = forever $ do
         if r < 10
           then error $ "bad weather in " ++ site
           else do
-            printThread $ site ++ ": LAUNCH MISSILE!"
+            printThread $ site ++ ": LAUNCH THE MISSILE!"
             return site
     )
     ( \e-> do

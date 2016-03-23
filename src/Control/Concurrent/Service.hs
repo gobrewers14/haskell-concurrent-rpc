@@ -16,8 +16,12 @@ newService = do
       putMVar requestMVar (request, responseMVar)
       response <- readMVar responseMVar
       case response of
-        Right result -> return result
         Left  e      -> throwIO (e :: SomeException)
+        Right result -> return result
     serverInterface requestMVar process = do
       (request, responseMVar) <- takeMVar requestMVar
-      putMVar responseMVar =<< try (process request)
+      elr <- try (process request)
+      putMVar responseMVar elr
+      case elr of
+        Left  e      -> throwIO e
+        Right _      -> return ()
