@@ -4,7 +4,7 @@ import Control.Exception
 import Control.Monad
 import Control.Concurrent
 import Control.Concurrent.Async
-import Control.Concurrent.Service
+import Control.Concurrent.RPC
 import Data.Word
 import System.Random
 
@@ -13,12 +13,12 @@ type LaunchSite = String
 
 main :: IO ()
 main = do
-  (clientInterface, serverInterface) <- newService
-  runMissileProduction clientInterface
-    `race_` runLaunchSite serverInterface "Redmond"
-    `race_` runLaunchSite serverInterface "Cambridge"
+  (launchMissile, withMissile) <- newRPC
+  runMissileProduction launchMissile
+    `race_` runLaunchSite withMissile "Redmond"
+    `race_` runLaunchSite withMissile "Cambridge"
 
-runLaunchSite :: ServerInterface Missile LaunchSite -> LaunchSite -> IO ()
+runLaunchSite :: WithRPC Missile LaunchSite -> LaunchSite -> IO ()
 runLaunchSite withMissile site = forever $ do
   sleepRandom
   catch
@@ -35,7 +35,7 @@ runLaunchSite withMissile site = forever $ do
       printThread $ site ++ ": Couldn't launch. Waiting for next missile."
     )
 
-runMissileProduction :: ClientInterface Missile LaunchSite -> IO ()
+runMissileProduction :: RPC Missile LaunchSite -> IO ()
 runMissileProduction launchMissile =
   produce  `race_` produce `race_` produce `race_` produce
   where
