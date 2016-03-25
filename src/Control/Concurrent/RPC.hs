@@ -6,6 +6,12 @@
 --
 -- Maintainer  :  info@lars-petersen.net
 -- Stability   :  experimental
+--
+-- This module offers the single method `newRPC` which creates a typed
+-- communication channel. Give the one end of the channel to client threads
+-- and the other end to worker threads.
+--
+-- Also see https://gist.github.com/lpeterse/da7b574da5c7a0dc9794 for an example.
 -----------------------------------------------------------------------------
 module Control.Concurrent.RPC where
 
